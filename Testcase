@@ -1,0 +1,118 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+public class LoginTest {
+
+    WebDriver driver;
+
+    @BeforeClass
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get("http://localhost/login.html");
+    }
+
+    @Test
+    public void testEmptyUsername() {
+        driver.findElement(By.id("username")).clear();
+        driver.findElement(By.id("password")).sendKeys("password123");
+        driver.findElement(By.tagName("button")).click();
+
+        String error = driver.findElement(By.id("error")).getText();
+        Assert.assertEquals(error, "Please enter username");
+    }
+
+    @Test
+    public void testEmptyPassword() {
+        driver.findElement(By.id("username")).sendKeys("testuser");
+        driver.findElement(By.id("password")).clear();
+        driver.findElement(By.tagName("button")).click();
+
+        String error = driver.findElement(By.id("error")).getText();
+        Assert.assertEquals(error, "Please enter password");
+    }
+
+    @Test
+    public void testInvalidPasswordLength() {
+        driver.findElement(By.id("username")).sendKeys("testuser");
+        driver.findElement(By.id("password")).sendKeys("123");
+        driver.findElement(By.tagName("button")).click();
+
+        String error = driver.findElement(By.id("error")).getText();
+        Assert.assertEquals(error, "Password must be at least 6 characters");
+    }
+
+    @Test
+    public void testValidLogin() {
+        driver.findElement(By.id("username")).sendKeys("testuser");
+        driver.findElement(By.id("password")).sendKeys("password123");
+        driver.findElement(By.tagName("button")).click();
+
+        // Example: Verify redirect or success message
+        Assert.assertTrue(driver.getPageSource().contains("Login successful"));
+    }
+
+    @AfterClass
+    public void teardown() {
+        driver.quit();
+    }
+}
+
+pip install selenium
+
+import unittest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+class LoginTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Chrome()
+        cls.driver.maximize_window()
+        cls.driver.get("http://localhost/login.html")
+
+    def test_empty_username(self):
+        self.driver.find_element(By.ID, "username").clear()
+        self.driver.find_element(By.ID, "password").send_keys("password123")
+        self.driver.find_element(By.TAG_NAME, "button").click()
+
+        error = self.driver.find_element(By.ID, "error").text
+        self.assertEqual(error, "Please enter username")
+
+    def test_empty_password(self):
+        self.driver.find_element(By.ID, "username").send_keys("testuser")
+        self.driver.find_element(By.ID, "password").clear()
+        self.driver.find_element(By.TAG_NAME, "button").click()
+
+        error = self.driver.find_element(By.ID, "error").text
+        self.assertEqual(error, "Please enter password")
+
+    def test_invalid_password_length(self):
+        self.driver.find_element(By.ID, "username").send_keys("testuser")
+        self.driver.find_element(By.ID, "password").send_keys("123")
+        self.driver.find_element(By.TAG_NAME, "button").click()
+
+        error = self.driver.find_element(By.ID, "error").text
+        self.assertEqual(error, "Password must be at least 6 characters")
+
+    def test_valid_login(self):
+        self.driver.find_element(By.ID, "username").send_keys("testuser")
+        self.driver.find_element(By.ID, "password").send_keys("password123")
+        self.driver.find_element(By.TAG_NAME, "button").click()
+
+        self.assertIn("Login successful", self.driver.page_source)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+
+if __name__ == "__main__":
+    unittest.main()
